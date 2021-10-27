@@ -1,24 +1,48 @@
-import './App.css';
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import Box from "@mui/material/Box";
+import { styled } from "@mui/system";
 
-function App() {
+import NavBar from "./NavBar";
+
+const Root = styled("div")(({ theme }) => ({
+  height: "100vh",
+}));
+
+const Container = styled("div")(({ theme }) => ({
+  display: "flex",
+  height: "calc(100% - 64px) !important",
+  width: "100%",
+  border: "1px solid red",
+  justifyContent: "center",
+  alignContent: "stretch",
+}));
+
+const Item = styled(Box)(({ theme }) => ({
+  height: "100%",
+  width: "50%",
+  border: "1px solid red",
+}));
+
+const theme = createTheme({
+  palette: {
+    // mode: "dark",
+  },
+});
+
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Root>
+        <NavBar />
+        <Container>
+          <Item>Folder</Item>
+          <Item>Document</Item>
+        </Container>
+      </Root>
+    </ThemeProvider>
   );
-}
+};
 
 export default App;
