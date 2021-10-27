@@ -4,6 +4,15 @@ import { alpha, styled } from "@mui/material/styles";
 import TreeView from "@mui/lab/TreeView";
 import TreeItem, { treeItemClasses } from "@mui/lab/TreeItem";
 import DescriptionIcon from "@mui/icons-material/Description";
+import Divider from "@mui/material/Divider";
+import Box from "@mui/material/Box";
+
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+// import ListItemButton from "@mui/material/ListItemButton";
+// import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+
 function MinusSquare(props) {
   return (
     <SvgIcon fontSize="inherit" style={{ width: 14, height: 14 }} {...props}>
@@ -22,19 +31,27 @@ function PlusSquare(props) {
   );
 }
 
-function CloseSquare(props) {
-  return (
-    <SvgIcon
-      className="close"
-      fontSize="inherit"
-      style={{ width: 14, height: 14 }}
-      {...props}
-    >
-      {/* tslint:disable-next-line: max-line-length */}
-      <path d="M17.485 17.512q-.281.281-.682.281t-.696-.268l-4.12-4.147-4.12 4.147q-.294.268-.696.268t-.682-.281-.281-.682.294-.669l4.12-4.147-4.12-4.147q-.294-.268-.294-.669t.281-.682.682-.281.696 .268l4.12 4.147 4.12-4.147q.294-.268.696-.268t.682.281 .281.669-.294.682l-4.12 4.147 4.12 4.147q.294.268 .294.669t-.281.682zM22.047 22.074v0 0-20.147 0h-20.12v0 20.147 0h20.12zM22.047 24h-20.12q-.803 0-1.365-.562t-.562-1.365v-20.147q0-.776.562-1.351t1.365-.575h20.147q.776 0 1.351.575t.575 1.351v20.147q0 .803-.575 1.365t-1.378.562v0z" />
-    </SvgIcon>
-  );
-}
+// function CloseSquare(props) {
+//   return (
+//     <SvgIcon
+//       className="close"
+//       fontSize="inherit"
+//       style={{ width: 14, height: 14 }}
+//       {...props}
+//     >
+//       {/* tslint:disable-next-line: max-line-length */}
+//       <path d="M17.485 17.512q-.281.281-.682.281t-.696-.268l-4.12-4.147-4.12 4.147q-.294.268-.696.268t-.682-.281-.281-.682.294-.669l4.12-4.147-4.12-4.147q-.294-.268-.294-.669t.281-.682.682-.281.696 .268l4.12 4.147 4.12-4.147q.294-.268.696-.268t.682.281 .281.669-.294.682l-4.12 4.147 4.12 4.147q.294.268 .294.669t-.281.682zM22.047 22.074v0 0-20.147 0h-20.12v0 20.147 0h20.12zM22.047 24h-20.12q-.803 0-1.365-.562t-.562-1.365v-20.147q0-.776.562-1.351t1.365-.575h20.147q.776 0 1.351.575t.575 1.351v20.147q0 .803-.575 1.365t-1.378.562v0z" />
+//     </SvgIcon>
+//   );
+// }
+
+// fake API
+const folders = {
+  root: ["other document"],
+  1: ["Document - 1a", "Document - 1b"],
+  "2a": ["Document - 2a1", "Document - 2a2", "Document - 2a3"],
+  "2b1": ["Document - 2b1a", "Document - 2b1b"],
+};
 
 const data = {
   id: "root",
@@ -98,10 +115,6 @@ const data = {
         },
       ],
     },
-    {
-      id: "3",
-      name: "other document",
-    },
   ],
 };
 
@@ -120,7 +133,36 @@ const StyledTreeItem = styled((props) => <TreeItem {...props} />)(
   })
 );
 
+const Container = styled("div")(({ theme }) => ({
+  display: "flex",
+  height: "calc(100% - 64px) !important",
+  width: "100%",
+  justifyContent: "center",
+  alignContent: "stretch",
+}));
+
+const Left = styled(Box)(({ theme }) => ({
+  height: "100%",
+  width: "30%",
+}));
+
+const Right = styled(Box)(({ theme }) => ({
+  height: "100%",
+  width: "70%",
+}));
+
 export default function CustomizedTreeView() {
+  const [folder, setFolder] = React.useState([]);
+
+  const handleClick = (event, nodeIds) => {
+    let expandedId = nodeIds[0];
+    if (expandedId === "root") {
+      expandedId = nodeIds[1];
+    }
+    console.log(expandedId);
+    setFolder(folders[expandedId] ? folders[expandedId] : []);
+  };
+
   const renderTree = (nodes) => (
     <StyledTreeItem key={nodes.id} nodeId={nodes.id} label={nodes.name}>
       {Array.isArray(nodes.children)
@@ -130,18 +172,33 @@ export default function CustomizedTreeView() {
   );
 
   return (
-    <>
-      <div>asdf</div>
-      <TreeView
-        aria-label="customized"
-        defaultExpanded={["1"]}
-        defaultCollapseIcon={<MinusSquare />}
-        defaultExpandIcon={<PlusSquare />}
-        defaultEndIcon={<DescriptionIcon />}
-        sx={{ height: "100%", flexGrow: 1, maxWidth: 400, overflowY: "auto" }}
-      >
-        {renderTree(data)}
-      </TreeView>
-    </>
+    <Container>
+      <Left>
+        <TreeView
+          aria-label="customized"
+          defaultExpanded={["1"]}
+          defaultCollapseIcon={<MinusSquare />}
+          defaultExpandIcon={<PlusSquare />}
+          defaultEndIcon={<DescriptionIcon />}
+          onNodeToggle={handleClick}
+          sx={{ height: "100%", flexGrow: 1, maxWidth: 400, overflowY: "auto" }}
+        >
+          {renderTree(data)}
+        </TreeView>
+      </Left>
+      <Divider orientation="vertical" variant="middle" />
+      <Right>
+        {folder.length === 0 ? "請點選左側資料夾" : "資料夾內含文件："}
+        <List>
+          {folder.map((f) => {
+            return (
+              <ListItem key={f}>
+                <ListItemText>{f}</ListItemText>
+              </ListItem>
+            );
+          })}
+        </List>
+      </Right>
+    </Container>
   );
 }
