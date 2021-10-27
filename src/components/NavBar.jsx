@@ -27,7 +27,7 @@ const NavBar = () => {
     <NavBarRoot position="sticky">
       <Toolbar>
         <Button color="inherit" href="/" startIcon={<MemoryIcon />}>
-          <Typography>ApMemory</Typography>
+          <Typography variant="h5">ApMemory</Typography>
         </Button>
         <Box sx={{ flexGrow: 1 }} />
         <IconButton color="inherit">

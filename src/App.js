@@ -1,9 +1,12 @@
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
+import Divider from "@mui/material/Divider";
 import { styled } from "@mui/system";
 
-import NavBar from "./NavBar";
+import NavBar from "./components/NavBar";
+import Document from "./components/Document";
+import Folder from "./components/Folder";
 
 const Root = styled("div")(({ theme }) => ({
   height: "100vh",
@@ -13,15 +16,18 @@ const Container = styled("div")(({ theme }) => ({
   display: "flex",
   height: "calc(100% - 64px) !important",
   width: "100%",
-  border: "1px solid red",
   justifyContent: "center",
   alignContent: "stretch",
 }));
 
-const Item = styled(Box)(({ theme }) => ({
+const Left = styled(Box)(({ theme }) => ({
   height: "100%",
-  width: "50%",
-  border: "1px solid red",
+  width: "30%",
+}));
+
+const Right = styled(Box)(({ theme }) => ({
+  height: "100%",
+  width: "70%",
 }));
 
 const theme = createTheme({
@@ -37,8 +43,13 @@ const App = () => {
       <Root>
         <NavBar />
         <Container>
-          <Item>Folder</Item>
-          <Item>Document</Item>
+          <Left>
+            <Folder />
+          </Left>
+          <Divider orientation="vertical" variant="middle" />
+          <Right>
+            <Document />
+          </Right>
         </Container>
       </Root>
     </ThemeProvider>
