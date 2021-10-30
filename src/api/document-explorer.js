@@ -1,9 +1,9 @@
 import axios from "axios";
 
-class API {
+class DocumentExplorerApi {
   async tree(host) {
-    const url = `${host}/document/explorer/tree`;
     return new Promise((resolve, reject) => {
+      const url = `${host}/document/explorer/tree`;
       axios
         .get(url)
         .then((res) => {
@@ -16,10 +16,10 @@ class API {
   }
 
   async search(host, folder) {
-    const url = `${host}/document/explorer/search`;
     return new Promise((resolve, reject) => {
+      const url = `${host}/document/explorer/search`;
       axios
-        .get(url, { path: folder })
+        .get(url, { params: { path: folder } })
         .then((res) => {
           resolve(res.data);
         })
@@ -30,4 +30,4 @@ class API {
   }
 }
 
-export default API;
+export const documentExplorer = new DocumentExplorerApi();

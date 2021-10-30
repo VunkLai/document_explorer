@@ -1,5 +1,5 @@
-import { createContext, useEffect, useState } from "react";
-import API from "../api/document-explorer";
+import { createContext, useState } from "react";
+import { documentExplorer } from "../api/document-explorer";
 
 const defaultSettings = {
   server: "http://localhost",
@@ -18,18 +18,14 @@ export const ResourceProvider = (props) => {
   const { children } = props;
   const [settings, setSettings] = useState(defaultSettings);
 
-  useEffect(() => {
-    setSettings({ ...defaultSettings });
-  }, []);
-
   const tree = async () => {
-    const { result } = await API.tree(settings.search);
-    setSettings({ folder: result });
+    const result = await documentExplorer.tree(settings.server);
+    setSettings({ ...settings, folder: result });
   };
 
   const search = async (folder) => {
-    const { result } = await API.search(settings.server, folder);
-    setSettings({ files: result });
+    const result = await documentExplorer.search(settings.server, folder);
+    setSettings({ ...settings, files: result });
   };
 
   return (

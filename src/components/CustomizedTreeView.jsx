@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import { alpha, styled } from "@mui/material/styles";
 import TreeView from "@mui/lab/TreeView";
 import TreeItem, { treeItemClasses } from "@mui/lab/TreeItem";
@@ -12,6 +12,8 @@ import ListItem from "@mui/material/ListItem";
 // import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { MinusSquare, PlusSquare } from "./Squares";
+import useResource from "../hooks/useResource";
+import { Typography } from "@mui/material";
 
 const StyledTreeItem = styled((props) => <TreeItem {...props} />)(
   ({ theme }) => ({
@@ -47,20 +49,23 @@ const Right = styled(Box)(({ theme }) => ({
 }));
 
 export default function CustomizedTreeView() {
-  const [folder, setFolder] = React.useState([]);
+  const { folder, files, tree, search } = useResource();
 
-  const handleClick = (event, nodeIds) => {
-    let expandedId = nodeIds[0];
-    if (expandedId === "root") {
-      expandedId = nodeIds[1];
-    }
-    console.log(expandedId);
-    setFolder(folders[expandedId] ? folders[expandedId] : []);
+  React.useEffect(() => {
+    const initialize = async () => await tree();
+    initialize();
+  }, []);
+
+  const handleClick = async (e, nodeIds) => {
+    let latestId = nodeIds[0];
+    console.log(latestId);
+    await search(latestId);
+    console.log(files);
   };
 
   const renderTree = (nodes) => (
     <StyledTreeItem key={nodes.id} nodeId={nodes.id} label={nodes.name}>
-      {Array.isArray(nodes.children)
+      {Array.isArray(nodes.children) && nodes.children.length > 0
         ? nodes.children.map((node) => renderTree(node))
         : null}
     </StyledTreeItem>
@@ -68,7 +73,7 @@ export default function CustomizedTreeView() {
 
   return (
     <Container>
-      <Left>
+      <Left sx={{ p: 3 }}>
         <TreeView
           aria-label="customized"
           defaultExpanded={["1"]}
@@ -78,15 +83,34 @@ export default function CustomizedTreeView() {
           onNodeToggle={handleClick}
           sx={{ height: "100%", flexGrow: 1, maxWidth: 400, overflowY: "auto" }}
         >
-          {renderTree(data)}
+          {renderTree(folder)}
         </TreeView>
       </Left>
       <Divider orientation="vertical" variant="middle" />
-      <Right>
-        <a href="http://localhost/document/explorer/download?path=b/ba/ba-1.doc">
+      <Right sx={{ p: 3 }}>
+        <Typography variant="h5">Folder: {files.id}</Typography>
+        <Divider variant="middle" />
+        <List sx={{ p: 1 }}>
+          {files.children ? (
+            files.children.map((file) => {
+              return (
+                <ListItem key={file.id}>
+                  <ListItemText>
+                    <a href="#">{file.name}</a>
+                  </ListItemText>
+                </ListItem>
+              );
+            })
+          ) : (
+            <></>
+          )}
+          <Divider />
+          DEBUG: {JSON.stringify(files)}
+        </List>
+        {/* <a href="http://localhost/document/explorer/download?path=b/ba/ba-1.doc">
           ba-1.doc
-        </a>
-        {folder.length === 0 ? "請點選左側資料夾" : "資料夾內含文件："}
+        </a> */}
+        {/* {folder.length === 0 ? "請點選左側資料夾" : "資料夾內含文件："}
         <List>
           {folder.map((f) => {
             return (
@@ -95,7 +119,7 @@ export default function CustomizedTreeView() {
               </ListItem>
             );
           })}
-        </List>
+        </List> */}
       </Right>
     </Container>
   );
